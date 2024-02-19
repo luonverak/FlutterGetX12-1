@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
               badgeContent: Obx(
                 () => Text('${controller.listProduct.length}'),
               ),
-              child: Icon(Icons.shopping_cart),
+              child: const Icon(Icons.shopping_cart),
             ),
           ),
           const SizedBox(width: 20),
