@@ -1,82 +1,90 @@
-import 'package:demo2/controller/counter_controller.dart';
-import 'package:demo2/view/second_screen.dart';
+import 'package:demo2/controller/cart_controller.dart';
+import 'package:demo2/model/product_model.dart';
+import 'package:demo2/view/cart_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:get/get.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-  final controller = Get.put(CounterController());
+  final controller = Get.put(CartController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('title'.trArgs()),
+        title: const Text("Demo App"),
         actions: [
-          IconButton(
-            onPressed: () {
-              Get.updateLocale(Locale('kh', 'KH'));
-            },
-            icon: const Icon(Icons.language),
+          GestureDetector(
+            onTap: () => Get.to(CartScreen()),
+            child: badges.Badge(
+              badgeContent: Obx(
+                () => Text('${controller.listProduct.length}'),
+              ),
+              child: Icon(Icons.shopping_cart),
+            ),
           ),
-          IconButton(
-            onPressed: () {
-              Get.snackbar('Babe😘', 'message'.trArgs());
-            },
-            icon: const Icon(Icons.notifications),
-          ),
-          IconButton(
-            onPressed: () {
-              Get.changeTheme(
-                  Get.isDarkMode ? ThemeData.light() : ThemeData.dark());
-            },
-            icon: const Icon(Icons.dark_mode),
-          ),
-          IconButton(
-            onPressed: () => Get.to(SecondScreen()),
-            icon: const Icon(Icons.arrow_forward),
-          )
+          const SizedBox(width: 20),
         ],
       ),
-      body: Center(
-        child: Obx(
-          () => Text(
-            '${controller.counter.value}',
-            style: const TextStyle(
-              fontSize: 40,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 1 / 1.5,
+          children: List.generate(
+            listProduct.length,
+            (index) => item(
+              listProduct[index],
             ),
           ),
         ),
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            onPressed: () => controller.decrease(),
-            icon: Icon(Icons.remove),
-          ),
-          const SizedBox(
-            width: 30,
-          ),
-          IconButton(
-            onPressed: () => controller.increase(),
-            icon: Icon(Icons.add),
-          ),
-        ],
-      ),
     );
   }
-}
 
-class MyTranslations extends Translations {
-  @override
-  Map<String, Map<String, String>> get keys => {
-        'en_US': {
-          'title': 'Welcome',
-          'message': 'I love you beb😘❤️',
-        },
-        'kh_KH': {
-          'title': 'សូមស្វាគមន៍',
-          'message': 'បងស្រលាញ់អូនស្មើរៗគ្នា😘❤️',
-        }
-      };
+  Widget item(ProductModel productModel) {
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(productModel.image),
+            ),
+          ),
+          child: Text(
+            productModel.name,
+            style: const TextStyle(
+              fontSize: 20,
+              backgroundColor: Colors.amber,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Positioned(
+          right: 10,
+          bottom: 10,
+          child: GestureDetector(
+            onTap: () {
+              controller.addCart(productModel);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(50)),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(Icons.shopping_cart),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }

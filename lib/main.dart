@@ -13,9 +13,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      defaultTransition: Transition.native,
-      translations: MyTranslations(),
-      locale: Locale('en', 'UK'),
       home: HomeScreen(),
     );
   }
